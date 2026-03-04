@@ -13,6 +13,8 @@ class Loading:
                              "\033[0;37m{percent}% {values} | {elapsed} < {eta}{speed}\033[0m"),
                  carriage_char='\r', print_cli=True):
         
+        
+        
         self.iterable = iterable
         self.finish = len(iterable) if iterable is not None else finish
         self.style = style
@@ -27,6 +29,8 @@ class Loading:
         self.action, self.comp, self.loading = action, comp, loading
         self.unit, self.margin, self.auto_bytes = unit, margin, auto_bytes
         self.format_str = format_str
+        if not loading:
+            self.format_str = "{margin} \033[1;34m[{bar}]\033[0m {percent} {values} {margin}"
         self.carriage_char, self.print_toterminal = carriage_char, print_cli
         self.ansi_escape = re.compile(r'\x1b\[[0-9;]*[mK]')
         self.byte_units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
