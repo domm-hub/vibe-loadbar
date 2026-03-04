@@ -3,7 +3,7 @@ import time
 import sys
 import re
 from wcwidth import wcswidth
-from .styleOBJ import *
+from .styleOBJ import * 
 # --- Main Loading Class ---
 class Loading:
     def __init__(self, iterable=None, style=None, bar_fil="-", end='>', bar_unfil='-',
