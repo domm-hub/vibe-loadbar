@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="vibe-loadbar",
-    version="0.1.5",
+    version="0.2.0",
     author="Adam",
     description="A lightweight alternative to TQDM. Part of the vibe suite.",
     long_description=open("README.md").read(),
