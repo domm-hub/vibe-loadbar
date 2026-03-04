@@ -140,13 +140,7 @@ num = FunStyle(
  # Quick pulse, then a long "chill"
 )
 # The 'end' character cycles through the growth stages
-SMOOTH_BLOCK = FunStyle(
-    bar_fils=['█'], 
-    ends=['▏', '▎', '▍', '▌', '▋', '▊', '▉', '█'],
-    bar_unfils=[' '],
-    elapse_pattern=[1, 1, 1, 1, 1, 1, 1, 1] 
-)
-
+smooth = SmoothStyle()
 
 
 
