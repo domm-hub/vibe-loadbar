@@ -1,5 +1,7 @@
 # Vibe Loader
 
+![Vibe Demo](demos.gif)
+
 **Vibe Loader** is a lightweight alternative to TQDM, written in less than 250 lines of code. It uses an event-based function called `update` to refresh values dynamically.
 
 ## Features
