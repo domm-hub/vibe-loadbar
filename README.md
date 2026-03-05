@@ -26,3 +26,12 @@ The new `MinLoad` class is faster than `tqdm` in most tasks.
 
 ### Links
 Check out the repository here: [vibe-loadbar on GitHub](https://www.github.com/domm-hub/vibe-loadbar)
+
+### Example Usage:
+~~~python
+from vibe_load import Loading, SmoothStyle
+import time
+
+for i in Loading(range(100), style=SmoothStyle()):
+    time.sleep(0.01)
+~~~
