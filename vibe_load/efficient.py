@@ -4,7 +4,7 @@ import time
 
 class MinLoad:
     # Added 'iterable' to slots so it can be stored
-    __slots__ = ('iterable', 'finish', 'width', 'prefix', 'fil', 'end', 'unfil', 'rc', 'term_w', 'p')
+    __slots__ = ('iterable', 'finish', 'width', 'prefix', 'fil', 'end', 'unfil', 'rc', 'term_w', 'p', 'past_prog')
 
     def __init__(self, iterable=None, finish=100, recalculate_width=False, prefix='Loading..'):
         self.iterable = iterable  # <--- CRITICAL FIX: Storing the data!
@@ -23,8 +23,10 @@ class MinLoad:
         self.fil = '-'
         self.end = '>'
         self.unfil = ' '
+        self.past_prog = 0
 
     def update(self, progress):
+        
         # 1. Throttling (Speed Limiter)
         # Only update if 0.04s has passed OR if we are hitting 100%
         # This prevents the terminal from flickering and speeds up the loop
@@ -32,6 +34,7 @@ class MinLoad:
         if now - self.p < 0.04 and progress < self.finish:
             return
 
+        
         self.p = now
         
         # 2. Quick Exit (Safety)
@@ -70,6 +73,7 @@ class MinLoad:
         # 6. Direct Output
         sys.stdout.write(f'\r{self.prefix} [{bar_content}] {pct_str} {val_str}')
         sys.stdout.flush()
+        self.past_prog = progress
 
     def __iter__(self):
         if not self.iterable:
@@ -78,4 +82,11 @@ class MinLoad:
         for i, item in enumerate(self.iterable):
             yield item
             self.update(i + 1)
+        sys.stdout.write('\n')
+    
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        # Print a newline on exit so the prompt doesn't overwrite the bar
         sys.stdout.write('\n')
