@@ -27,11 +27,31 @@ The new `MinLoad` class is faster than `tqdm` in most tasks.
 ### Links
 Check out the repository here: [vibe-loadbar on GitHub](https://www.github.com/domm-hub/vibe-loadbar)
 
-### Example Usage:
+### Example Usage for Loading:
 ~~~python
 from vibe_load import Loading, SmoothStyle
 import time
 
 for i in Loading(range(100), style=SmoothStyle()):
+    time.sleep(0.1)
+
+with Loading(range(100), style=SmoothStyle()) as pbar:
+    for i in pbar:
+        time.sleep(0.1)
+    
+#These loops should take ~10 seconds
+~~~
+
+
+### Example Usage for MinLoad:
+~~~python
+from vibe_load import MinLoad
+import time
+
+for i in MinLoad(range(100)):
     time.sleep(0.01)
+
+with MinLoad(range(100)) as pbar:
+    for i in pbar:
+        time.sleep(0.1)
 ~~~
