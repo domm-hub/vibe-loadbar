@@ -1,4 +1,4 @@
 from .main import Loading
 from .styleOBJ import Style
-from . import styles
+from .styles import *
 from .efficient import MinLoad
