@@ -140,4 +140,4 @@ num = FunStyle(
  # Quick pulse, then a long "chill"
 )
 # The 'end' character cycles through the growth stages
-smooth = SmoothStyle()
+SMOOTH = SmoothStyle()
