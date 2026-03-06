@@ -73,3 +73,6 @@ with MinLoad(range(100)) as pbar:
 
 ### Links
 Check out the repository here: [vibe-loadbar on GitHub](https://www.github.com/domm-hub/vibe-loadbar)
+
+---
+Built with ❤️ by **Adam Hany**. Part of the **Vibe Suite**.
