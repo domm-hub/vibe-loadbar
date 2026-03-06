@@ -45,9 +45,10 @@ pip install -e git+https://github.com/domm-hub/vibe-loadbar
 ### Example Usage for Loading:
 ~~~python
 from vibe_load import Loading, SmoothStyle
+from vibe_load.themes import garden
 import time
 
-for i in Loading(range(100), style=SmoothStyle()):
+for i in Loading(range(100), style=SmoothStyle(), theme=garden):
     time.sleep(0.1)
 
 with Loading(range(100), style=SmoothStyle()) as pbar:
