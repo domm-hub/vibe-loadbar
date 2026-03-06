@@ -29,13 +29,6 @@
 
 ---
 
-| Argument    | Type   | Usage                                                       |
-| ----------- | ------ | ----------------------------------------------------------- |
-| `finish`    | `int`  | Is the end value for a loop.                                |
-| `iterable`  | `iter` | Iterable for loops                                          |
-| `print_cli` | `bool` | Whether the update function prints or returns the bar text. |
-
----
 
 ## Installation from PyPi.
 ```sh
