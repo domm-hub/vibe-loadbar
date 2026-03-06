@@ -39,20 +39,22 @@ class Loading:
         # Theme setup
         from .clr import Styler
         from .styleOBJ import Theme
-        #Local import if needed
         self.styler = Styler()
         self.theme = theme or Theme('white', 'white', 'white')
 
     def _t(self, text, color_attr):
-        """Helper to style text using the theme."""
+        """Styles text using the theme colors."""
         color = getattr(self.theme, color_attr)
         return self.styler.txt_style(color, str(text))
 
     def calculate_width(self, text):
+        """Calculates visual width, correctly identifying emoji double-columns."""
+        if not text: return 0
         clean_text = self.ansi_escape.sub('', str(text))
         return wcswidth(clean_text)
 
     def format_bytes(self, size):
+        """Converts raw numbers to human-readable byte strings."""
         for unit in self.byte_units:
             if size < 1024.0: return f"{size:>6.2f} {unit}"
             size /= 1024.0
@@ -64,11 +66,9 @@ class Loading:
         return f"{m:02d}:{s:02d}"
 
     def _get_style_chars(self):
-        """Logic extracted from main.py's display method."""
+        """Retrieves the correct characters for the current style frame."""
         b_fil, b_end, b_unfil = self.default_chars
-        
-        if not self.style:
-            return b_fil, b_end, b_unfil
+        if not self.style: return b_fil, b_end, b_unfil
 
         if isinstance(self.style, SmoothStyle):
             return self.style.bar_fil, "", self.style.bar_unfil
@@ -96,24 +96,21 @@ class Loading:
         if now - self.last_redrawn < self.interval and progress < self.finish:
             return self.past
 
-        # 1. Calculations
+        # 1. Base Calculations
         elapsed = now - self.start_time
         speed_val = progress / elapsed if elapsed > 0 else 0
         eta_val = (self.finish - progress) / speed_val if speed_val > 0 else 0
         percent = (progress / self.finish * 100) if self.finish > 0 else 0
         
-        # 2. String Prep
         val_text = f"({self.format_bytes(progress) if self.auto_bytes else progress}/{self.format_bytes(self.finish) if self.auto_bytes else self.finish})"
         speed_text = f" | {self.format_bytes(speed_val)}/s" if self.auto_bytes else f" | {speed_val:>6.1f}{self.unit}/s"
         
-        # Truncate Action
+        # 2. Dynamic Truncation for Action Text
         max_act = max(5, int(width * 0.2))
         disp_act = self.action if self.calculate_width(self.action) <= max_act else self.action[:max_act-1] + "…"
 
-        # 3. Bar Construction (Uncolored for width math)
+        # 3. Bar Space Calculation (Using visual width)
         b_fil, b_end, b_unfil = self._get_style_chars()
-        
-        # Calculate Metadata width to find remaining Bar space
         meta_sample = self.format_str.format(
             margin=' '*self.margin, action=disp_act, bar="", percent=f"{percent:>6.2f}",
             values=val_text, elapsed=self.format_time(elapsed), eta=self.format_time(eta_val),
@@ -121,21 +118,44 @@ class Loading:
         )
         bar_len = max(1, width - self.calculate_width(meta_sample))
         
-        # Build Bar String
+        # 4. Accurate Bar Construction with Character-Width Awareness
         ratio = min(1.0, progress / self.finish if self.finish > 0 else 0)
+        f_w = max(1, self.calculate_width(b_fil))   # Filler width
+        e_w = self.calculate_width(b_end)          # End width
+        u_w = max(1, self.calculate_width(b_unfil)) # Unfiller width
+
         if isinstance(self.style, SmoothStyle):
             total_filled = bar_len * ratio
-            n_full = int(total_filled)
-            char_idx = int((total_filled - n_full) * len(self.style.frames))
-            mid = self.style.frames[min(char_idx, len(self.style.frames)-1)] if n_full < bar_len else ""
-            bar_raw = (b_fil * n_full) + mid
-            bar_raw += b_unfil * (bar_len - self.calculate_width(bar_raw))
+            n_full = int(total_filled / f_w)
+            
+            fill_str = b_fil * n_full
+            # Calculate sub-character frame index
+            remaining_after_full = total_filled - (n_full * f_w)
+            char_idx = int(remaining_after_full * len(self.style.frames))
+            mid_str = self.style.frames[min(char_idx, len(self.style.frames)-1)] if (n_full * f_w) < bar_len else ""
+            
+            current_w = self.calculate_width(fill_str + mid_str)
+            unfill_count = int(max(0, bar_len - current_w) / u_w)
+            bar_raw = fill_str + mid_str + (b_unfil * unfill_count)
         else:
-            num_f = int(bar_len * ratio)
-            bar_raw = (b_fil * num_f)[:bar_len-self.calculate_width(b_end)] + b_end
-            bar_raw += b_unfil * (bar_len - self.calculate_width(bar_raw))
+            # Leave room for the 'end' character
+            available_for_fill = max(0, bar_len - e_w)
+            num_f = int((available_for_fill * ratio) / f_w)
+            
+            fill_str = b_fil * num_f
+            current_w = self.calculate_width(fill_str)
+            
+            # Fill remaining space with unfiller
+            rem_len = max(0, bar_len - current_w - e_w)
+            num_u = int(rem_len / u_w)
+            bar_raw = fill_str + b_end + (b_unfil * num_u)
 
-        # 4. Final Render with Theme
+        # Final Padding to ensure the bar fills the exact target width
+        final_w = self.calculate_width(bar_raw)
+        if final_w < bar_len:
+            bar_raw += " " * (bar_len - final_w)
+
+        # 5. Final Render with Theme
         res = self.format_str.format(
             margin = ' ' * self.margin,
             action = self._t(disp_act, 'ac_clr'),
