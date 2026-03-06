@@ -1,5 +1,10 @@
 # Vibe Loader
 
+# New! 
+## Themes 
+Themes are colour templates and use the `Theme()` object.
+
+
 ![Vibe Demo](demos.gif)
 
 **Vibe Loader** is a lightweight alternative to TQDM, written in less than 250 lines of code. It uses an event-based function called `update` to refresh values dynamically.
@@ -48,12 +53,12 @@ from vibe_load import Loading, SmoothStyle
 from vibe_load.themes import garden
 import time
 
-for i in Loading(range(100), style=SmoothStyle(), theme=garden):
-    time.sleep(0.1)
+for i in Loading(range(1000), style=SmoothStyle(), theme=garden):
+    time.sleep(0.01)
 
-with Loading(range(100), style=SmoothStyle()) as pbar:
+with Loading(range(1000), style=SmoothStyle()) as pbar:
     for i in pbar:
-        time.sleep(0.1)
+        time.sleep(0.01)
     
 #These loops should take ~10 seconds
 ~~~
@@ -64,16 +69,17 @@ with Loading(range(100), style=SmoothStyle()) as pbar:
 from vibe_load import MinLoad
 import time
 
-for i in MinLoad(range(100)):
+for i in MinLoad(range(1000)):
     time.sleep(0.01)
 
-with MinLoad(range(100)) as pbar:
+with MinLoad(range(1000)) as pbar:
     for i in pbar:
-        time.sleep(0.1)
+        time.sleep(0.01)
 ~~~
 
 ### Links
 Check out the repository here: [vibe-loadbar on GitHub](https://www.github.com/domm-hub/vibe-loadbar)
 
+PyPi Module link: [vibe-loadbar on PyPI](https://pypi.org/project/vibe-loadbar)
 ---
 Built with ❤️ by **Adam Hany**. Part of the **Vibe Suite**.
