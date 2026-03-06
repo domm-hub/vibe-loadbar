@@ -1,5 +1,6 @@
 from .styleOBJ import Theme
 
+default = Theme('white', 'white', 'white')
 garden = Theme('blue', 'green', 'yellow')
 cyberpunk = Theme('magenta', 'cyan', 'yellow')
 royal = Theme('blue', 'magenta', 'white')
