@@ -14,18 +14,40 @@
 - **Developer Friendly:** All variables are public and changeable, plus support for custom styles.
 
 ## Performance
-The new `MinLoad` class is faster than `tqdm` in most tasks.
-
-| Candidate | Time (s) | IT/s | Overhead |
+**The new minload is faster than tqdm.**
+| Library | Overhead Cost (Lower is Better) | Speed Factor | Efficiency |
 | :--- | :--- | :--- | :--- |
-| **Baseline** | 0.0022 | 45,207,098 | +0.0% |
-| **tqdm** | 0.0474 | 2,109,886 | +2,042.6% |
-| **MinLoad** | 0.0377 | 2,651,187 | +1,605.2% |
+| **`vibe-loadbar` (MinLoad)** | **0.0995s**  | **1.76x Faster** | **High** |
+| `tqdm` (Standard) | 0.1930s | 1.00x (Baseline) | Moderate |
+
+
+
+[![MinLoad Speed](https://img.shields.io/badge/MinLoad-1.76x_Faster_than_tqdm-brightgreen?style=for-the-badge&logo=python)](https://github.com/domm-hub/vibe-loadbar)
+> *Test Conditions: Measured as pure overhead (Total Time - Raw Loop Time) on a standard Python loop.*
+
+`MinLoad()` is better than `Loading()` in speed, `Loading()` is better for aesthetics.
 
 ---
 
-### Links
-Check out the repository here: [vibe-loadbar on GitHub](https://www.github.com/domm-hub/vibe-loadbar)
+| Argument    | Type   | Usage                                                       |
+| ----------- | ------ | ----------------------------------------------------------- |
+| `finish`    | `int`  | Is the end value for a loop.                                |
+| `iterable`  | `iter` | Iterable for loops                                          |
+| `print_cli` | `bool` | Whether the update function prints or returns the bar text. |
+
+---
+
+## Installation from PyPi.
+```sh
+pip install vibe-loadbar
+```
+
+## Installation from Github. **(For latest updates.)**
+### Note: Cutting Edge updates might have errors or be unstable.
+```sh
+pip install -e git+https://github.com/domm-hub/vibe-loadbar
+```
+
 
 ### Example Usage for Loading:
 ~~~python
@@ -55,3 +77,6 @@ with MinLoad(range(100)) as pbar:
     for i in pbar:
         time.sleep(0.1)
 ~~~
+
+### Links
+Check out the repository here: [vibe-loadbar on GitHub](https://www.github.com/domm-hub/vibe-loadbar)
