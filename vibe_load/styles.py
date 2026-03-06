@@ -141,7 +141,3 @@ num = FunStyle(
 )
 # The 'end' character cycles through the growth stages
 smooth = SmoothStyle()
-
-
-
-

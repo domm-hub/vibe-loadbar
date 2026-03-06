@@ -21,7 +21,7 @@ class MinLoad:
         if min_iters:
             self.min_iters = min_iters
         else:
-            self.min_iters = max(1, self.finish // 200)  # Target ~200 updates total
+            self.min_iters = max(1, self.finish // 200)  # Target ~2000 updates total
 
         try:
             self.term_w = os.get_terminal_size().columns
