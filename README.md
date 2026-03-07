@@ -1,8 +1,9 @@
 # Vibe Loader
 
 # New! 
-## Themes 
-Themes are colour templates and use the `Theme()` object.
+
+**Rust**
+A new rust object that doesn't have a purpose because FFI is too slow to even handle it.
 
 
 ![Vibe Demo](demos.gif)
