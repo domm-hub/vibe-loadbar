@@ -1,4 +1,7 @@
-from .clr import Styler
+try:
+    from .clr import Styler
+except:
+    from clr import Styler
 
 class Style:
     """Basic static style (e.g., [===>---])."""

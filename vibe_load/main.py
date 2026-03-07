@@ -3,7 +3,10 @@ import time
 import sys
 import re
 from wcwidth import wcswidth
-from .styleOBJ import *
+try:
+    from .styleOBJ import *
+except ImportError:
+    from styleOBJ import *
 
 class Loading:
     def __init__(self, iterable=None, style=None, bar_fil="-", end='>', bar_unfil='-',
@@ -37,8 +40,12 @@ class Loading:
         self.byte_units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
         
         # Theme setup
-        from .clr import Styler
-        from .styleOBJ import Theme
+        try:
+            from .clr import Styler
+            from .styleOBJ import Theme
+        except:
+            from clr import Styler
+            from styleOBJ import Theme
         self.styler = Styler()
         self.theme = theme or Theme('white', 'white', 'white')
 
@@ -86,6 +93,9 @@ class Loading:
         
         return self.style.bar_fil, self.style.end, self.style.bar_unfil
 
+    def write(self, txt):
+        sys.stdout.write(txt + '\n')
+    
     def update(self, progress):
         try: width = os.get_terminal_size().columns - 2
         except OSError: width = 78
