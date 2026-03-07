@@ -8,7 +8,7 @@ Have the visuals of `Loading()`, with the speed of **TQDM**
 
 ![Vibe Demo](demos.gif)
 
-**Vibe Loader** is a lightweight alternative to TQDM, written in less than 250 lines of code. It uses an event-based function called `update` to refresh values dynamically.
+**Vibe Loader** is a lightweight alternative to TQDM, written in **under 800 lines** of `code`. It uses an event-based function called `update` to refresh values dynamically.
 
 ## Features
 - **100+ Styles:** Passed directly into the `Loading` object.
@@ -20,7 +20,7 @@ Have the visuals of `Loading()`, with the speed of **TQDM**
 - **Developer Friendly:** All variables are public and changeable, plus support for custom styles.
 
 ## Performance
-**The new minload is faster than tqdm.**
+**The new `MinLoad` is faster than tqdm.**
 
 | Library | Total Time | Iterations/sec | Speed Factor |
 | :--- | :--- | :--- | :--- |
@@ -43,7 +43,7 @@ Have the visuals of `Loading()`, with the speed of **TQDM**
 pip install vibe-loadbar
 ```
 
-## Installation from Github. **(For latest updates.)**
+## Installation from `Github`. **(For latest updates.)**
 ### Note: Cutting Edge updates might have errors or be unstable.
 ```sh
 pip install git+https://github.com/domm-hub/vibe-loadbar
