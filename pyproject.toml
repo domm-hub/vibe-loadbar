@@ -1,6 +1,6 @@
 [project]
 name = "vibe-loadbar"
-version = "0.4.1"
+version = "1.0.0"
 description = "A high-performance Rust-powered alternative to TQDM."
 authors = [{name = "Adam Hany"}]
 readme = "README.md"
