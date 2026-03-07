@@ -21,18 +21,19 @@ Have the visuals of `Loading()`, with the speed of **TQDM**
 
 ## Performance
 **The new minload is faster than tqdm.**
-| Library | Overhead Cost (Lower is Better) | Speed Factor | Efficiency |
+
+| Library | Total Time | Iterations/sec | Speed Factor |
 | :--- | :--- | :--- | :--- |
-| **MinLoad** | **0.0995s**  | **1.76x Faster** | **High** |
-| `tqdm` (Standard) | 0.1930s | 1.00x (Baseline) | Moderate |
+| **MinLoad** | **0.0989s** | **5,063,945 it/s** | **1.45x Faster** |
+| `tqdm` | 0.1436s | 4,320,390 it/s | 1.00x (Baseline) |
+| `RustBar` (Rust) | 0.1480s | 3,490,749 it/s | 0.97x |
+| `Loading` (Legacy) | 0.5197s | 962,297 it/s | 0.28x |
 
-
-
-
-[![MinLoad Speed](https://img.shields.io/badge/MinLoad-1.76x_Faster_than_tqdm-brightgreen?style=for-the-badge&logo=python)](https://github.com/domm-hub/vibe-loadbar)
-> *Test Conditions: Measured as pure overhead (Total Time - Raw Loop Time) on a standard Python loop.*
+[![MinLoad Speed](https://img.shields.io/badge/MinLoad-1.45x_Faster_than_tqdm-brightgreen?style=for-the-badge&logo=python)](https://github.com/domm-hub/vibe-loadbar)
+> *Test Conditions: Measured over 500,000 iterations on a standard Python loop.*
 
 `MinLoad()` is better than `Loading()` in speed, `Loading()` is better for aesthetics.
+`RustBar()` (Rust) gives you the best of both worlds: high performance with rich visuals.
 
 ---
 
@@ -45,7 +46,7 @@ pip install vibe-loadbar
 ## Installation from Github. **(For latest updates.)**
 ### Note: Cutting Edge updates might have errors or be unstable.
 ```sh
-pip install -e git+https://github.com/domm-hub/vibe-loadbar
+pip install git+https://github.com/domm-hub/vibe-loadbar
 ```
 
 
