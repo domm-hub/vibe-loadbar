@@ -2,8 +2,8 @@
 
 # New! 
 
-**Rust**
-A new rust object that doesn't have a purpose because FFI is too slow to even handle it.
+### **Rust**
+Have the visuals of `Loading()`, with the speed of **TQDM**
 
 
 ![Vibe Demo](demos.gif)
@@ -23,8 +23,9 @@ A new rust object that doesn't have a purpose because FFI is too slow to even ha
 **The new minload is faster than tqdm.**
 | Library | Overhead Cost (Lower is Better) | Speed Factor | Efficiency |
 | :--- | :--- | :--- | :--- |
-| **`vibe-loadbar` (MinLoad)** | **0.0995s**  | **1.76x Faster** | **High** |
+| **MinLoad** | **0.0995s**  | **1.76x Faster** | **High** |
 | `tqdm` (Standard) | 0.1930s | 1.00x (Baseline) | Moderate |
+
 
 
 

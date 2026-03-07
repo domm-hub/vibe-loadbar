@@ -1,7 +1,7 @@
 [package]
 name = "vibe_loadbar_rs"
 version = "0.1.0"
-edition = "2021" # Use 2021 for stability
+edition = "2021"
 
 [lib]
 name = "vibe_loadbar_rs"
@@ -11,4 +11,4 @@ crate-type = ["cdylib"]
 pyo3 = { version = "0.23", features = ["extension-module"] }
 crossterm = "0.29"
 regex = "1.10"
-unicode-width = "0.1"
+unicode-width = "0.1.11"
