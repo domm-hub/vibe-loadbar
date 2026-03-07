@@ -1,0 +1,21 @@
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "vibe-loadbar"
+version = "0.4.1"
+description = "A high-performance Rust-powered alternative to TQDM."
+authors = [{name = "Adam Hany"}]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["wcwidth"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Rust",
+    "License :: OSI Approved :: MIT License",
+]
+
+[tool.maturin]
+python-source = "." 
+module-name = "vibe_load.vibe_loadbar_rs"
