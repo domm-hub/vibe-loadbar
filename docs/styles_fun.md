@@ -101,3 +101,6 @@ This logic allows for non-uniform animation speeds. For example, a "glitch" effe
 
 ---
 Built with ❤️ by **Adam Hany**. Part of the **Vibe Suite**.
+
+---
+[« Back to Home](./README.md)

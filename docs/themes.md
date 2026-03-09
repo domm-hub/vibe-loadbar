@@ -102,3 +102,6 @@ All themes use standard ANSI escape codes, which are supported by most modern te
 
 ---
 Built with ❤️ by **Adam Hany**. Part of the **Vibe Suite**.
+
+---
+[« Back to Home](./README.md)

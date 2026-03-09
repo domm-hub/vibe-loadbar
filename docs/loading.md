@@ -121,3 +121,6 @@ The `format_str` parameter allows you to completely redesign the output line. Av
 
 ---
 Built with ❤️ by **Adam Hany**. Part of the **Vibe Suite**.
+
+---
+[« Back to Home](./README.md)

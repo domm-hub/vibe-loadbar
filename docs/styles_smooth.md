@@ -75,3 +75,6 @@ This technique provides a more granular visual feedback, especially useful for s
 
 ---
 Built with ❤️ by **Adam Hany**. Part of the **Vibe Suite**.
+
+---
+[« Back to Home](./README.md)

@@ -112,3 +112,6 @@ The extension exposes the `LoadBar` class to Python, which is then wrapped by th
 
 ---
 Built with ❤️ by **Adam Hany**. Part of the **Vibe Suite**.
+
+---
+[« Back to Home](./README.md)

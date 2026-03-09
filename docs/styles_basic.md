@@ -89,3 +89,6 @@ The `Loading` class uses these characters to construct the progress bar line by 
 
 ---
 Built with ❤️ by **Adam Hany**. Part of the **Vibe Suite**.
+
+---
+[« Back to Home](./README.md)
