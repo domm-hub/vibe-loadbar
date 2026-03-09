@@ -29,11 +29,11 @@ class RustBar:
             0.3
         )
 
-    def update(self, n=1):
-        self.n += n
+    def update(self, n):
+
         # Check gate using self.total_items
-        if self.n % self.gate == 0 or self.n >= self.total_items:
-            self.engine.update(float(self.n))
+        if self.n % self.gate == 0:
+            self.engine.update(float(n))
 
     def finish(self):
         """Manually call the Rust finish method."""

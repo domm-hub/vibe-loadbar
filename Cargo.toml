@@ -8,7 +8,6 @@ name = "vibe_loadbar_rs"
 crate-type = ["cdylib"]
 
 [dependencies]
-pyo3 = { version = "0.23", features = ["extension-module"] }
-crossterm = "0.29"
-regex = "1.10"
-unicode-width = "0.1.11"
+pyo3 = { version = "0.21", features = ["extension-module"] }
+crossterm = "0.27"
+unicode-width = "0.1"
