@@ -63,7 +63,7 @@ with Loading(range(1000), style=SmoothStyle()) as pbar:
     for i in pbar:
         time.sleep(0.01)
     
-#These loops should take ~10 seconds
+# These loops should take ~10 seconds
 ~~~
 
 
@@ -84,5 +84,7 @@ with MinLoad(range(1000)) as pbar:
 Check out the repository here: [vibe-loadbar on GitHub](https://www.github.com/domm-hub/vibe-loadbar)
 
 PyPi Module link: [vibe-loadbar on PyPI](https://pypi.org/project/vibe-loadbar)
+
+For more information on how to use this module see [docs][docs/README.md]
 ---
 Built with ❤️ by **Adam Hany**. Part of the **Vibe Suite**.
