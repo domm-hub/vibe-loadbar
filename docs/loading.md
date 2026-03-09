@@ -44,7 +44,7 @@ pbar = Loading(
 | `action` | `str` | `'CHILLING'` | The label displayed at the start of the bar. |
 | `comp` | `str` | `'Complete'` | Text printed when the progress is finished. |
 | `finish` | `int` | `100` | The target value for 100% progress. |
-| `loading` | `bool` | `True` | Internal state flag to enable rendering. |
+| `loading` | `bool` | `True` | Defines the bar mode (e.g., whether it functions as a loadbar, a value bar, etc.). *Note: Currently reserved for future logic.* |
 | `unit` | `str` | `''` | Unit label for the speed (e.g., `"/s"`, `"it/s"`). |
 | `margin` | `int` | `1` | Leading whitespace before the progress bar. |
 | `auto_bytes` | `bool` | `False` | Automatically format progress and speed values into human-readable bytes (KB, MB, etc.). |
