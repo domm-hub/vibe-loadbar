@@ -85,6 +85,6 @@ Check out the repository here: [vibe-loadbar on GitHub](https://www.github.com/d
 
 PyPi Module link: [vibe-loadbar on PyPI](https://pypi.org/project/vibe-loadbar)
 
-For more information on how to use this module see [docs][./docs/README.md]
+For more information on how to use this module see [Read the Docs](./docs/README.md)
 ---
 Built with ❤️ by **Adam Hany**. Part of the **Vibe Suite**.
