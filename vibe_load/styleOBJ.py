@@ -5,23 +5,29 @@ except:
 
 class Style:
     """Basic static style (e.g., [===>---])."""
-    def __init__(self, bar_fil, end, bar_unfil):
+    def __init__(self, bar_fil, end, bar_unfil, br1="[", br2="]"):
         self.bar_fil = bar_fil
         self.end = end
         self.bar_unfil = bar_unfil
+        self.br1 = br1
+        self.br2 = br2
 
 class FunStyle:
     """Animated styles with rhythmic timing (pulsing/moving)."""
-    def __init__(self, bar_fils, ends, bar_unfils, elapse_pattern=None):
+    def __init__(self, bar_fils, ends, bar_unfils, elapse_pattern=None, br1="(", br2=")"):
         self.bar_fils = bar_fils
         self.ends = ends
         self.bar_unfils = bar_unfils
         self.elapse_pattern = elapse_pattern or [1]
+        self.br1 = br1
+        self.br2 = br2
         
 class SmoothStyle:
-    def __init__(self, bar_fil='█', bar_unfil=' ', frames=[' ', '▏', '▎', '▍', '▌', '▋', '▊', '▉']):
+    def __init__(self, bar_fil='█', bar_unfil=' ', frames=[' ', '▏', '▎', '▍', '▌', '▋', '▊', '▉'], br1="▉", br2="▉"):
         self.bar_fil, self.bar_unfil = bar_fil, bar_unfil
         self.frames = frames
+        self.br1 = br1
+        self.br2 = br2
         
 class Theme:
     def __init__(self, action_clr, bar_clr, et_clr):
