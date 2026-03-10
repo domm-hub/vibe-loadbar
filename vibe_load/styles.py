@@ -132,7 +132,7 @@ PULSE = FunStyle(
     elapse_pattern=[10, 6, 6, 6, 1]
 )
 
-num = FunStyle(
+NUM = FunStyle(
     bar_fils='o i i a'.split(' '),
     ends=[' ', '·', ' ', '·'],
     bar_unfils=[' '],
