@@ -26,7 +26,8 @@ my_style = Style(
 | `bar_fil` | `str` | `None` | Character used for the filled part of the bar. |
 | `end` | `str` | `None` | Character used for the "head" or tip of the bar. |
 | `bar_unfil` | `str` | `None` | Character used for the unfilled part of the bar. |
-
+| `br1` | `str` | `"["` | Bracket one for the bar.
+| `br2` | `str` | `"]"` | Bracket two for the bar.
 ---
 
 ## 🔧 Predefined Basic Styles

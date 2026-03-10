@@ -28,6 +28,8 @@ my_fun_style = FunStyle(
 | `ends` | `list[str]` | `None` | A list of characters for the "head" or tip of the bar. |
 | `bar_unfils` | `list[str]` | `None` | A list of characters for the unfilled part of the bar. |
 | `elapse_pattern`| `list[float]`| `[1]` | A list of durations (in ticks) for each frame in the animation cycle. |
+| `br1` | `str` | `"("` | Bracket one for the bar.
+| `br2` | `str` | `")"` | Bracket two for the bar.
 
 ---
 

@@ -26,7 +26,8 @@ my_smooth_style = SmoothStyle(
 | `bar_fil` | `str` | `'█'` | Character used for the fully filled part of the bar. |
 | `bar_unfil` | `str` | `' '` | Character used for the unfilled part of the bar. |
 | `frames` | `list` | `[' ', '▏', '▎', '▍', '▌', '▋', '▊', '▉']` | List of Unicode characters for sub-character precision. |
-
+| `br1` | `str` | `"▉"` | Bracket one for the bar.
+| `br2` | `str` | `"▉"` | Bracket two for the bar.
 ---
 
 ## 🔧 Predefined Smooth Styles
