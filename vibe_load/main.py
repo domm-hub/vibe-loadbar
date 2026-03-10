@@ -4,6 +4,8 @@ import sys
 import re
 from wcwidth import wcswidth
 import os
+from .err import FinishAlreadySet
+
 try:
     from .styleOBJ import *
 except ImportError:
@@ -15,7 +17,7 @@ class Loading:
                  unit='', margin=1, auto_bytes=False,
                  format_str=("{margin} {action} {br1}{bar}{br2} "
                              "{percent} {values} {sep} {elapsed} {com} {eta} {speed}"),
-                 print_cli=True, theme=None, wfunc=wcswidth):
+                 print_cli=True, theme=None, wfunc=wcswidth, br1 = "[", br2 = "]"):
         
         self.iterable = iterable
         self.finish = len(iterable) if iterable is not None else finish
@@ -27,6 +29,9 @@ class Loading:
         self.w_func = wfunc
         self.miniters = 1
         self.calls = 0
+        
+        self.br1 = br1
+        self.br2 = br2
         
         # Style defaults
         self.default_chars = (bar_fil, end, bar_unfil)
@@ -42,6 +47,7 @@ class Loading:
         # Regex and Byte constants
         self.ansi_escape = re.compile(r'\x1b\[[0-9;]*[mK]')
         self.byte_units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+        self.elapsed = 0
         
         # Theme setup
         try:
@@ -120,15 +126,15 @@ class Loading:
             return self.past
 
         # 1. Base Calculations
-        elapsed = now - self.start_time
+        self.elapsed = now - self.start_time
         if self.finish > 0:
-            speed_val = progress / elapsed if elapsed > 0 else 0
+            speed_val = progress / self.elapsed if self.elapsed > 0 else 0
             eta_val = (self.finish - progress) / speed_val if speed_val > 0 else 0
             percent = (progress / self.finish * 100)
             pct_text = f"{percent:>6.2f}%"
             eta_text = self.format_time(eta_val)
         else:
-            speed_val = progress / elapsed if elapsed > 0 else 0
+            speed_val = progress / self.elapsed if self.elapsed > 0 else 0
             pct_text = "  --- %"
             eta_text = "--:--"
         
@@ -145,7 +151,7 @@ class Loading:
         if self.loading:
             meta_sample = self.format_str.format(
                 margin=' '*self.margin, action=disp_act, bar="", percent=pct_text,
-                values=val_text, elapsed=self.format_time(elapsed), eta=eta_text,
+                values=val_text, elapsed=self.format_time(self.elapsed), eta=eta_text,
                 speed=speed_text, br1="[", br2="]", com="<", sep="|"
             )
             bar_len = max(1, width - self.calculate_width(meta_sample))
@@ -182,21 +188,34 @@ class Loading:
             else:
                 # 🎾 BOUNCE MODE (Indeterminate)
                 import math
-                wing_size = max(2, int(bar_len * 0.05))
-                available_space = bar_len - wing_size
+                wing_size = math.floor(max(2, int(bar_len * 0.05)) / self.calculate_width(b_fil))
+                # Calculate how many cells the wing actually takes up
+                wing_visual_width = wing_size * self.calculate_width(b_fil)
+                available_space = bar_len - wing_visual_width
+
                 if available_space > 0:
-                    t = now * 1 # Speed of bounce
+                    t = now 
                     ping_pong = (math.sin(t) + 1) / 2
                     pos = int(ping_pong * available_space)
-                    bar_raw = (" " * pos) + (b_fil * wing_size) + (" " * (available_space - pos))
+                    
+                    # Construct the bar using cell-widths, not character counts
+                    left_padding = " " * pos
+                    right_padding = " " * (available_space - pos)
+                    bar_raw = left_padding + (b_fil * wing_size) + right_padding
                 else:
-                    bar_raw = b_fil * bar_len
+                    # Fallback if the wing is too big for the bar
+                    max_emojis = bar_len // self.calculate_width(b_fil)
+                    bar_raw = b_fil * max_emojis
+
 
             final_w = self.calculate_width(bar_raw)
             if final_w < bar_len:
                 bar_raw += " " * (bar_len - final_w)
-            
-            br1, br2 = '[', ']'
+                
+            if not self.style:
+                br1, br2 = self.br1, self.br2
+            else:
+                br1, br2 = self.style.br1, self.style.br2
         else:
             bar_raw = ""
             br1, br2 = "", ""
@@ -208,7 +227,7 @@ class Loading:
             bar    = self._t(bar_raw, 'br_clr'),
             percent= self._t(pct_text, 'ex_clr'),
             values = self._t(val_text, 'ex_clr'),
-            elapsed= self._t(self.format_time(elapsed), 'ex_clr'),
+            elapsed= self._t(self.format_time(self.elapsed), 'ex_clr'),
             eta    = self._t(eta_text, 'ex_clr'),
             speed  = self._t(speed_text, 'ex_clr'),
             br1    = self._t(br1, 'br_clr'),
@@ -225,13 +244,22 @@ class Loading:
         self.last_redrawn = now
         return self.past
 
+    def set_finish(self, val):
+        if self.finish != 0:
+            raise FinishAlreadySet("Finish was already set by user.")
+        else:
+            self.finish = val
+    
     def __iter__(self):
         for i, item in enumerate(self.iterable):
             yield item
             self.update(i + 1)
-        if self.print_toterminal: sys.stdout.write(f"\n{self.comp}\n")
+        now = time.time()
+        if self.print_toterminal: sys.stdout.write(f"\n{self.comp} in ({self.format_time(self.elapsed)})\n")
 
     def __enter__(self): return self
     def __exit__(self, t, v, tb):
         if self.print_toterminal and not t:
-            sys.stdout.write(f"\n{self.comp}\n")
+            now = time.time()
+
+            sys.stdout.write(f"\n{self.comp} in ({self.format_time(self.elapsed)})\n")
