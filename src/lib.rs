@@ -50,6 +50,8 @@ pub struct LoadBar {
     // Optimization
     n_updates: u64,
     miniters: u64,
+    last_size_check: Instant,
+    cached_size: (u16, u16),
 }
 
 #[pymethods]
@@ -158,7 +160,11 @@ impl LoadBar {
         }
 
         let now = Instant::now();
-        let elapsed_render = now.duration_since(self.last_render_time).as_secs_f64();
+        if now.duration_since(self.last_size_check).as_millis() > 100 {
+            self.cached_size = terminal::size().unwrap_or((80, 20));
+            self.last_size_check = now;
+        }
+        let (term_w, _) = self.cached_size;
 
         // FPS Control
         if elapsed_render < 0.016 && current < self.finish {
