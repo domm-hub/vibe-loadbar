@@ -3,8 +3,8 @@ import time
 import sys
 import re
 from wcwidth import wcswidth
-import os
 from .err import FinishAlreadySet
+import math
 
 try:
     from .styleOBJ import *
@@ -187,7 +187,6 @@ class Loading:
                     bar_raw = fill_str + b_end + (b_unfil * num_u)
             else:
                 # 🎾 BOUNCE MODE (Indeterminate)
-                import math
                 wing_size = math.floor(max(2, int(bar_len * 0.05)) / self.calculate_width(b_fil))
                 # Calculate how many cells the wing actually takes up
                 wing_visual_width = wing_size * self.calculate_width(b_fil)
