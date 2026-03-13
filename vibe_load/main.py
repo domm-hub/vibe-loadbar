@@ -2,9 +2,12 @@ import os
 import time
 import sys
 import re
-from wcwidth import wcswidth
-from .err import FinishAlreadySet
 import math
+from wcwidth import wcswidth
+try:
+    from .err import FinishAlreadySet
+except ImportError:
+    class FinishAlreadySet(Exception): pass
 
 try:
     from .styleOBJ import *
@@ -13,14 +16,15 @@ except ImportError:
 
 class Loading:
     def __init__(self, iterable=None, style=None, bar_fil="-", end='>', bar_unfil='-',
-                 action='CHILLING', comp='Complete', finish=100, loading=True,
+                 action='CHILLING', comp='Complete', finish=100.0, loading=True,
                  unit='', margin=1, auto_bytes=False,
                  format_str=("{margin} {action} {br1}{bar}{br2} "
                              "{percent} {values} {sep} {elapsed} {com} {eta} {speed}"),
                  print_cli=True, theme=None, wfunc=wcswidth, br1 = "[", br2 = "]"):
         
         self.iterable = iterable
-        self.finish = len(iterable) if iterable is not None else finish
+        # FLOAT FIX: Force finish to be a float from the start
+        self.finish = float(len(iterable)) if iterable is not None else float(finish)
         self.style = style
         self.interval = 0.04 
         self.past = ""
@@ -47,7 +51,7 @@ class Loading:
         # Regex and Byte constants
         self.ansi_escape = re.compile(r'\x1b\[[0-9;]*[mK]')
         self.byte_units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
-        self.elapsed = 0
+        self.elapsed = 0.0
         
         # Theme setup
         try:
@@ -109,7 +113,6 @@ class Loading:
         sys.stdout.write(txt + '\n')
     
     def update(self, progress, widtha: float=None):
-        
         self.calls += 1
 
         try: 
@@ -118,28 +121,38 @@ class Loading:
             width = 78
             
         width = widtha if widtha else width
-        return self.__display__(progress, width)
+        
+        # FLOAT FIX: explicitly cast progress to float to prevent integer division issues
+        return self.__display__(float(progress), width)
 
-    def __display__(self, progress, width):
+    def __display__(self, progress: float, width):
         now = time.perf_counter()
         if now - self.last_redrawn < self.interval and progress < self.finish:
             return self.past
 
         # 1. Base Calculations
         self.elapsed = now - self.start_time
-        if self.finish > 0:
-            speed_val = progress / self.elapsed if self.elapsed > 0 else 0
-            eta_val = (self.finish - progress) / speed_val if speed_val > 0 else 0
-            percent = (progress / self.finish * 100)
+        if self.finish > 0.0:
+            speed_val = progress / self.elapsed if self.elapsed > 0 else 0.0
+            eta_val = (self.finish - progress) / speed_val if speed_val > 0 else 0.0
+            percent = (progress / self.finish * 100.0)
             pct_text = f"{percent:>6.2f}%"
             eta_text = self.format_time(eta_val)
         else:
-            speed_val = progress / self.elapsed if self.elapsed > 0 else 0
+            speed_val = progress / self.elapsed if self.elapsed > 0 else 0.0
             pct_text = "  --- %"
             eta_text = "--:--"
         
-        val_text = f"({self.format_bytes(progress) if self.auto_bytes else progress}/{self.format_bytes(self.finish) if self.auto_bytes else self.finish})"
-        speed_text = f" | {self.format_bytes(speed_val)}/s" if self.auto_bytes else f" | {speed_val:>6.1f}{self.unit}/s"
+        # FLOAT FIX: Added formatting to prevent massive decimal strings if raw floats are passed
+        if self.auto_bytes:
+            val_text = f"({self.format_bytes(progress)}/{self.format_bytes(self.finish)})"
+            speed_text = f" | {self.format_bytes(speed_val)}/s"
+        else:
+            # Format float to 2 decimals, or display as int if it ends in .0 to keep it clean
+            prog_str = f"{progress:.2f}" if not progress.is_integer() else f"{int(progress)}"
+            fin_str = f"{self.finish:.2f}" if not self.finish.is_integer() else f"{int(self.finish)}"
+            val_text = f"({prog_str}/{fin_str})"
+            speed_text = f" | {speed_val:>6.2f}{self.unit}/s"
         
         # 2. Dynamic Truncation for Action Text
         max_act = max(5, int(width * 0.2))
@@ -247,12 +260,12 @@ class Loading:
         if self.finish != 0:
             raise FinishAlreadySet("Finish was already set by user.")
         else:
-            self.finish = val
+            self.finish = float(val)
     
     def __iter__(self):
         for i, item in enumerate(self.iterable):
             yield item
-            self.update(i + 1)
+            self.update(float(i + 1))
         now = time.time()
         if self.print_toterminal: sys.stdout.write(f"\n{self.comp} in ({self.format_time(self.elapsed)})\n")
 
@@ -260,5 +273,4 @@ class Loading:
     def __exit__(self, t, v, tb):
         if self.print_toterminal and not t:
             now = time.time()
-
             sys.stdout.write(f"\n{self.comp} in ({self.format_time(self.elapsed)})\n")
