@@ -23,7 +23,6 @@ class Loading:
                  print_cli=True, theme=None, wfunc=wcswidth, br1 = "[", br2 = "]"):
         
         self.iterable = iterable
-        # FLOAT FIX: Force finish to be a float from the start
         self.finish = float(len(iterable)) if iterable is not None else float(finish)
         self.style = style
         self.interval = 0.04 
@@ -37,23 +36,18 @@ class Loading:
         self.br1 = br1
         self.br2 = br2
         
-        # Style defaults
         self.default_chars = (bar_fil, end, bar_unfil)
         self.action, self.comp, self.unit = action, comp, unit
         self.margin, self.auto_bytes = margin, auto_bytes
         self.format_str = format_str
         self.print_toterminal = print_cli
         
-        # State trackers for FunStyle
         self.ticks = 0
         self.current_frame_idx = 0
-        
-        # Regex and Byte constants
         self.ansi_escape = re.compile(r'\x1b\[[0-9;]*[mK]')
         self.byte_units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
         self.elapsed = 0.0
         
-        # Theme setup
         try:
             from .clr import Styler
             from .styleOBJ import Theme
@@ -65,19 +59,20 @@ class Loading:
         self.loading = loading
         self.i = 0
 
+    def _fmt(self, val):
+        """Forces exactly 2 decimal places to stop jumping."""
+        return f"{float(val):.2f}"
+
     def _t(self, text, color_attr):
-        """Styles text using the theme colors."""
         color = getattr(self.theme, color_attr)
         return self.styler.txt_style(color, str(text))
 
     def calculate_width(self, text):
-        """Calculates visual width, correctly identifying emoji double-columns."""
         if not text: return 0
         clean_text = self.ansi_escape.sub('', str(text))
         return self.w_func(clean_text)
 
     def format_bytes(self, size):
-        """Converts raw numbers to human-readable byte strings."""
         for unit in self.byte_units:
             if size < 1024.0: return f"{size:>6.2f} {unit}"
             size /= 1024.0
@@ -89,13 +84,10 @@ class Loading:
         return f"{m:02d}:{s:02d}"
 
     def _get_style_chars(self):
-        """Retrieves the correct characters for the current style frame."""
         b_fil, b_end, b_unfil = self.default_chars
         if not self.style: return b_fil, b_end, b_unfil
-
         if isinstance(self.style, SmoothStyle):
             return self.style.bar_fil, "", self.style.bar_unfil
-        
         if isinstance(self.style, FunStyle):
             p = self.style.elapse_pattern
             if self.ticks >= p[self.current_frame_idx % len(p)]:
@@ -106,23 +98,15 @@ class Loading:
             return (self.style.bar_fils[idx % len(self.style.bar_fils)],
                     self.style.ends[idx % len(self.style.ends)],
                     self.style.bar_unfils[idx % len(self.style.bar_unfils)])
-        
         return self.style.bar_fil, self.style.end, self.style.bar_unfil
 
-    def write(self, txt):
-        sys.stdout.write(txt + '\n')
-    
     def update(self, progress, widtha: float=None):
         self.calls += 1
-
         try: 
             width = os.get_terminal_size().columns - 2
         except OSError: 
             width = 78
-            
         width = widtha if widtha else width
-        
-        # FLOAT FIX: explicitly cast progress to float to prevent integer division issues
         return self.__display__(float(progress), width)
 
     def __display__(self, progress: float, width):
@@ -130,35 +114,30 @@ class Loading:
         if now - self.last_redrawn < self.interval and progress < self.finish:
             return self.past
 
-        # 1. Base Calculations
         self.elapsed = now - self.start_time
         if self.finish > 0.0:
             speed_val = progress / self.elapsed if self.elapsed > 0 else 0.0
             eta_val = (self.finish - progress) / speed_val if speed_val > 0 else 0.0
             percent = (progress / self.finish * 100.0)
-            pct_text = f"{percent:>6.2f}%"
+            # FIX: Use _fmt for consistent width
+            pct_text = f"{self._fmt(percent):>6} %"
             eta_text = self.format_time(eta_val)
         else:
             speed_val = progress / self.elapsed if self.elapsed > 0 else 0.0
             pct_text = "  --- %"
             eta_text = "--:--"
         
-        # FLOAT FIX: Added formatting to prevent massive decimal strings if raw floats are passed
+        # FIX: Ensure progress/finish are formatted to 2 decimal places
         if self.auto_bytes:
             val_text = f"({self.format_bytes(progress)}/{self.format_bytes(self.finish)})"
             speed_text = f" | {self.format_bytes(speed_val)}/s"
         else:
-            # Format float to 2 decimals, or display as int if it ends in .0 to keep it clean
-            prog_str = f"{progress:.2f}" if not progress.is_integer() else f"{int(progress)}"
-            fin_str = f"{self.finish:.2f}" if not self.finish.is_integer() else f"{int(self.finish)}"
-            val_text = f"({prog_str}/{fin_str})"
-            speed_text = f" | {speed_val:>6.2f}{self.unit}/s"
+            val_text = f"({self._fmt(progress)}/{self._fmt(self.finish)})"
+            speed_text = f" | {self._fmt(speed_val)}{self.unit}/s"
         
-        # 2. Dynamic Truncation for Action Text
         max_act = max(5, int(width * 0.2))
         disp_act = self.action if self.calculate_width(self.action) <= max_act else self.action[:max_act-1] + "…"
 
-        # 3. Bar Space Calculation (Using visual width)
         b_fil, b_end, b_unfil = self._get_style_chars()
         
         if self.loading:
@@ -169,70 +148,50 @@ class Loading:
             )
             bar_len = max(1, width - self.calculate_width(meta_sample))
             
-            # 4. Accurate Bar Construction
             if self.finish > 0:
                 ratio = min(1.0, progress / self.finish)
-                f_w = max(1, self.calculate_width(b_fil))   # Filler width
-                e_w = self.calculate_width(b_end)          # End width
-                u_w = max(1, self.calculate_width(b_unfil)) # Unfiller width
+                f_w = max(1, self.calculate_width(b_fil))
+                e_w = self.calculate_width(b_end)
+                u_w = max(1, self.calculate_width(b_unfil))
 
                 if isinstance(self.style, SmoothStyle):
                     total_filled = bar_len * ratio
                     n_full = int(total_filled / f_w)
-                    
                     fill_str = b_fil * n_full
                     remaining_after_full = total_filled - (n_full * f_w)
                     char_idx = int(remaining_after_full * len(self.style.frames))
                     mid_str = self.style.frames[min(char_idx, len(self.style.frames)-1)] if (n_full * f_w) < bar_len else ""
-                    
                     current_w = self.calculate_width(fill_str + mid_str)
                     unfill_count = int(max(0, bar_len - current_w) / u_w)
                     bar_raw = fill_str + mid_str + (b_unfil * unfill_count)
                 else:
                     available_for_fill = max(0, bar_len - e_w)
                     num_f = int((available_for_fill * ratio) / f_w)
-                    
                     fill_str = b_fil * num_f
                     current_w = self.calculate_width(fill_str)
-                    
                     rem_len = max(0, bar_len - current_w - e_w)
                     num_u = int(rem_len / u_w)
                     bar_raw = fill_str + b_end + (b_unfil * num_u)
             else:
-                # 🎾 BOUNCE MODE (Indeterminate)
                 wing_size = math.floor(max(2, int(bar_len * 0.05)) / self.calculate_width(b_fil))
-                # Calculate how many cells the wing actually takes up
                 wing_visual_width = wing_size * self.calculate_width(b_fil)
                 available_space = bar_len - wing_visual_width
-
                 if available_space > 0:
                     t = now 
                     ping_pong = (math.sin(t) + 1) / 2
                     pos = int(ping_pong * available_space)
-                    
-                    # Construct the bar using cell-widths, not character counts
-                    left_padding = " " * pos
-                    right_padding = " " * (available_space - pos)
-                    bar_raw = left_padding + (b_fil * wing_size) + right_padding
+                    bar_raw = (" " * pos) + (b_fil * wing_size) + (" " * (available_space - pos))
                 else:
-                    # Fallback if the wing is too big for the bar
-                    max_emojis = bar_len // self.calculate_width(b_fil)
-                    bar_raw = b_fil * max_emojis
-
+                    bar_raw = b_fil * (bar_len // self.calculate_width(b_fil))
 
             final_w = self.calculate_width(bar_raw)
             if final_w < bar_len:
                 bar_raw += " " * (bar_len - final_w)
                 
-            if not self.style:
-                br1, br2 = self.br1, self.br2
-            else:
-                br1, br2 = self.style.br1, self.style.br2
+            br1, br2 = (self.style.br1, self.style.br2) if self.style else (self.br1, self.br2)
         else:
-            bar_raw = ""
-            br1, br2 = "", ""
+            bar_raw, br1, br2 = "", "", ""
 
-        # 5. Final Render with Theme
         res = self.format_str.format(
             margin = ' ' * self.margin,
             action = self._t(disp_act, 'ac_clr'),
@@ -252,25 +211,20 @@ class Loading:
         if self.print_toterminal:
             sys.stdout.write(self.past)
             sys.stdout.flush()
-        
         self.last_redrawn = now
         return self.past
 
     def set_finish(self, val):
-        if self.finish != 0:
-            raise FinishAlreadySet("Finish was already set by user.")
-        else:
-            self.finish = float(val)
+        if self.finish != 0: raise FinishAlreadySet("Finish was already set.")
+        self.finish = float(val)
     
     def __iter__(self):
         for i, item in enumerate(self.iterable):
             yield item
             self.update(float(i + 1))
-        now = time.time()
         if self.print_toterminal: sys.stdout.write(f"\n{self.comp} in ({self.format_time(self.elapsed)})\n")
 
     def __enter__(self): return self
     def __exit__(self, t, v, tb):
         if self.print_toterminal and not t:
-            now = time.time()
             sys.stdout.write(f"\n{self.comp} in ({self.format_time(self.elapsed)})\n")
